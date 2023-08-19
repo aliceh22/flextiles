@@ -287,31 +287,30 @@
     </main>
 </body>
 <script>
-// Assuming you have an SVG element with id "svg"
 
 function update() {
 	// Clear the SVG
     while ($svg.firstChild) $svg.removeChild($svg.firstChild)
 
-    const columnsCount = Number($columns.value);
-    const verticalsCount = 2 * columnsCount + 2;
+    const columnsCount = Number($columns.value)
+    const verticalsCount = 2 * columnsCount + 2
 
-    const rowsCount = Number($rows.value);
-    const horizontalsCount = 2 * rowsCount + 1;
+    const rowsCount = Number($rows.value)
+    const horizontalsCount = 2 * rowsCount + 1
 
-    const width = Number($width.value);
-    const height = Number($height.value);
+    const width = Number($width.value)
+    const height = Number($height.value)
 
     const shear = Number($shear.checked)
     const radial = Number($radial.checked)
 
-    const x0 = 20 + width / 2;
-    const y0 = 20;
+    const x0 = 20 + width / 2
+    const y0 = 20
 
     const offset = 0.25 + 0.25 * (1-shear);
 
     for (let x = 0; x < verticalsCount; x++) {
-        const parity = (x + 1) % 2;
+        const parity = (x + 1) % 2
 
         const columnIndex = Math.round((x+1) / 2) * shear
 
