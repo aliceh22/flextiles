@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="manifest.json">
+
+    <title>Flextiles Designer</title>
+    <style>
+    :root {
+    	--shadow-1: 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 3px -2px rgba(0, 0, 0, 0.4);
+        --primary-color: #4285f4;
+    }
+
+    html{
+    	overflow: hidden;
+    }
+
+    body,
+    input {
+        font-family: system-ui;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        flex-grow: 1;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    header {
+        display: flex;
+        background: #424242;
+        color: white;
+        z-index: 2;
+        padding: 0 16px;
+        min-height: 56px;
+        align-items: center;
+        box-shadow: var(--shadow-1);
+        width: 100%;
+    }
+
+    header .heading {
+        font-size: 20px;
+        font-weight: 500;
+        padding: 16px;
+    }
+
+    main {
+        display: flex;
+        flex-grow: 1;
+        width: 100%;
+    }
+
+    .container {
+        display: flex;
+        flex-grow: 1;
+        padding: 32px;
+    }
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-1);
+        background: rgba(0, 0, 0, 0.1);
+        width: 240px;
+        height: 100vh;
+        padding: 16px;
+    }
+
+    svg.canvas {
+        box-shadow: var(--shadow-1);
+        width: 800px;
+        height: 600px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .row>* {
+        margin-right: 16px;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 24px;
+        max-width: 100%;
+        word-break: break-word;
+    }
+
+    .item:before {
+        content: attr(label);
+        font-size: 13px;
+        opacity: 0.8;
+        margin-bottom: 2px;
+    }
+
+    .item:empty {
+        display: none;
+    }
+
+    .sidebar input[type="number"]{
+    	width:40px;
+    }
+
+
+    /* ====== Range Slider ====== */
+
+	.slider {
+	    outline: none !important;
+	    -webkit-appearance: none;
+	    width: 100%;
+	    max-width: 300px;
+	    height: 56px;
+	    padding: 0;
+	    background: none;
+	}
+
+	.slider::-webkit-slider-runnable-track {
+	    width: 100%;
+	    height: 2px;
+	    cursor: pointer;
+	    background: rgba(0,0,0,0.1);
+	    border: none;
+	}
+
+	.slider::-moz-range-progress{
+	    background: var(--primary-color);
+	    width: 100%;
+	    height: 2px;
+	}
+
+	.slider::-moz-range-track {
+	    width: 100%;
+	    height: 2px;
+	    cursor: pointer;
+	    background: rgba(0,0,0,0.1);
+	    border: none;
+	}
+
+	.slider::-moz-range-thumb {
+	    box-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
+	    border: none;
+	    height: 16px;
+	    width: 16px;
+	    border-radius: 50%;
+	    background: white;
+	    cursor: pointer;
+	    margin-top: -8px;
+	    box-sizing: border-box;
+	}
+
+	.slider::-webkit-slider-thumb {
+	    box-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
+	    border: none;
+	    height: 16px;
+	    width: 16px;
+	    border-radius: 50%;
+	    background: white;
+	    cursor: pointer;
+	    -webkit-appearance: none;
+	    margin-top: -8px;
+	    box-sizing: border-box;
+	}
+
+	.slider::-ms-thumb {
+	    box-shadow: rgba(0, 0, 0, 0.5) 0 2px 4px;
+	    border: none;
+	    height: 16px;
+	    width: 16px;
+	    border-radius: 50%;
+	    background: white;
+	    cursor: pointer;
+	    margin-top: -8px;
+	    box-sizing: border-box;
+	}
+
+	.slider-container {
+	    width: 100%;
+	    max-width: 300px;
+	    position: relative;
+	    padding-top: 12px;
+	}
+
+	.slider-container:before,
+	.slider-container:after {
+	    position: absolute;
+	    top: 0;
+	}
+
+	.slider-container:before{
+	    content: attr(label-left);
+	    left: 0;
+	}
+
+	.slider-container:after {
+	    content: attr(label-right);
+	    right: 0;
+	}
+
+
+	/* Button */
+	button {
+    	position: relative;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	    touch-action: manipulation;
+	    border: none;
+	    outline: none;
+	    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 3px -2px rgba(0, 0, 0, 0.4);
+	    text-decoration: none;
+	    margin: 8px 0;
+	    padding: 0 16px;
+	    box-sizing: border-box;
+	    min-height: 40px;
+	    width: 100%;
+	    max-width: 260px;
+	    font-size: 14px;
+	    line-height: 24px;
+	    font-weight: 700;
+	    white-space: nowrap;
+	    cursor: pointer;
+	    user-select: none;
+	    background: var(--primary-color);
+	    color: white;
+	    transition: transform 200ms;
+	    border-radius: 8px;
+	    text-transform: uppercase;
+	    letter-spacing: 0.12em;
+	    text-rendering: optimizeLegibility;
+	    color: rgba(255, 255, 255, 0.85);
+	}
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="heading">
+            Flextiles Designer
+        </div>
+    </header>
+    <main>
+        <div class="sidebar">
+            <h3>Preferences</h3>
+            <div class="row">
+                <div class="item" label="Width">
+                    <input type="number" oninput="update()" id="$width" value="80">
+                </div>
+                <div class="item" label="Height">
+                    <input type="number" oninput="update()" id="$height" value="40">
+                </div>
+            </div>
+            <div class="item" label="Columns">
+                <input class="slider" type="range" oninput="update()" value="3" id="$columns" min=0 max="8">
+            </div>
+            <div class="item" label="Rows">
+                <input class="slider" type="range" oninput="update()" value="4" id="$rows" min=0 max=8>
+            </div>
+            <div class="item" label="Shear">
+                <label>
+                	<input type="checkbox" oninput="update()" id="$shear"> Shear
+                </label>
+            </div>
+            <div class="item" label="Radial">
+                <label>
+                	<input type="checkbox" oninput="update()" id="$radial"> Radial
+                </label>
+            </div>
+            <div class="grow"></div>
+            <button onclick="downloadSVG()">Download SVG</button>
+        </div>
+        <div class="container">
+            <svg id="$svg" class="canvas"></svg>
+        </div>
+    </main>
+</body>
+<script>
+// Assuming you have an SVG element with id "svg"
+
+function update() {
+	// Clear the SVG
+    while ($svg.firstChild) $svg.removeChild($svg.firstChild)
+
+    const columnsCount = Number($columns.value);
+    const verticalsCount = 2 * columnsCount + 2;
+
+    const rowsCount = Number($rows.value);
+    const horizontalsCount = 2 * rowsCount + 1;
+
+    const width = Number($width.value);
+    const height = Number($height.value);
+
+    const shear = Number($shear.checked)
+    const radial = Number($radial.checked)
+
+    const x0 = 20 + width / 2;
+    const y0 = 20;
+
+    const offset = 0.25 + 0.25 * (1-shear);
+
+    for (let x = 0; x < verticalsCount; x++) {
+        const parity = (x + 1) % 2;
+
+        const columnIndex = Math.round((x+1) / 2) * shear
+
+        if (x == verticalsCount - 1 && !parity) {
+            continue;
+        }
+        for (let y = 0; y < horizontalsCount; y++) {
+            if (y == horizontalsCount - 1 && parity) {
+                continue;
+            }
+            if(radial)
+            	drawLineRadial(x, y + offset * parity + 0.5 * columnIndex)
+            else
+            	drawLineLinear(x, y + offset * parity + 0.5 * columnIndex)
+        }
+    }
+
+    function drawLineLinear(x, y){
+    	x = x0 + x * width
+        y = y0 + y * height
+    	drawLine(x + width / 2, y, x - width / 2, y)
+    }
+
+    function drawLineRadial(x, y){
+        // Map to points on a circle
+        r = (y+1)**1.7 * height
+        alpha1 = (x - 0.5 + 1) / verticalsCount
+        x1 = r * Math.cos(Math.PI * alpha1) + $svg.clientWidth / 2
+        y1 = r * Math.sin(Math.PI * alpha1)
+
+        alpha2 = (x + 0.5 + 1) / verticalsCount
+        x2 = r * Math.cos(Math.PI * alpha2) + $svg.clientWidth / 2
+        y2 = r * Math.sin(Math.PI * alpha2) 
+    	drawLine(x1, y1, x2, y2)
+    }
+
+    function drawLine(x1, y1, x2, y2) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+        line.setAttribute('x1', x1)
+        line.setAttribute('y1', y1)
+        line.setAttribute('x2', x2)
+        line.setAttribute('y2', y2)
+        line.setAttribute('stroke', 'black')
+        line.setAttribute('stroke-width', '3')
+        $svg.appendChild(line)
+
+        const circle1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        circle1.setAttribute('cx', x1)
+        circle1.setAttribute('cy', y1)
+        circle1.setAttribute('r', '3')
+        circle1.setAttribute('fill', 'black')
+        $svg.appendChild(circle1)
+
+        const circle2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        circle2.setAttribute('cx', x2)
+        circle2.setAttribute('cy', y2)
+        circle2.setAttribute('r', '3')
+        circle2.setAttribute('fill', 'black')
+        $svg.appendChild(circle2)
+    }
+}
+
+update();
+
+function downloadSVG() {
+    // Serialize the SVG content to a string
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString($svg);
+
+    // Convert the serialized SVG to a Data URL
+    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary anchor element and trigger a download
+    const downloadLink = document.createElement("a");
+    downloadLink.href = url;
+    downloadLink.download = "pattern.svg";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+</script>
+
+</html>
