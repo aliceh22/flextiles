@@ -7,13 +7,17 @@
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="icons/icon-192x192.png" />
     <title>Flextiles Designer</title>
+    <meta name="description" content="Design tool for generating Flextiles templates">
+    <meta property="og:title" content="Flextiles Designer">
+    <meta property="og:image" content="https://flextiles.github.io/icons/flextiles_preview.png">
+    <meta property="og:description" content="Design tool for generating Flextiles templates">
+    <meta property="og:url" content="https://flextiles.github.io">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body>
     <header>
-        <div class="heading">
-            Flextiles Designer
-        </div>
+        Flextiles Designer
     </header>
     <main>
         <div class="sidebar">
@@ -188,7 +192,7 @@ function update() {
         y0 = 20 + height 
         offset2 = x * 0.5
         x = x * diamondWidth
-        const diamondHeight =  2 * Math.sqrt(  (height) ** 2 -  (diamondWidth / 2) ** 2  )
+        const diamondHeight =  2 * Math.sqrt(  (height) ** 2 - (diamondWidth / 2) ** 2  )
         y = y * diamondHeight + isShear * offset2 * diamondHeight
         ctx.beginPath()
         ctx.moveTo(x + x0, y - diamondHeight / 2 + y0)
@@ -291,12 +295,12 @@ header {
     align-items: center;
     box-shadow: var(--shadow-1);
     width: 100%;
+    box-sizing: border-box;
 }
 
-header .heading {
+header {
     font-size: 20px;
     font-weight: 500;
-    padding: 16px;
 }
 
 main {
