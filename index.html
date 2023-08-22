@@ -21,49 +21,62 @@
     </header>
     <main>
         <div class="sidebar">
-            <h3>Preferences</h3>
+            <h3>Cell Properties</h3>
             <div class="item" label="Pattern Type">
                 <div class="row radio">
                     <label>
-                        <input id="$regular" type="radio" name="patternType" checked> Regular
+                        <input id="$regular" type="radio" name="patternType" checked> Diamond
                     </label>
                     <label>
                         <input id="$isShear" type="radio" name="patternType"> Shear
                     </label>
                     <label>
+                        <input id="$isHexagon" type="radio" name="patternType"> Hexagon
+                    </label>
+                    
+                </div>
+                <div class="row radio">
+                    <label>
                         <input id="$isRadial" type="radio" name="patternType"> Radial
                     </label>
                 </div>
             </div>
-            <div class="row">
-                <div class="item" label="Height">
-                    <input id="$height" type="number" value="40">
-                </div>
-                <div class="item" label="Width">
-                    <input id="$width" type="number" value="80">
-                </div>
-                <div class="item" label="Shear">
-                    <input id="$shear" type="number" value="0.25" min="0" max="0.5" step="0.01">
-                </div>
-                <div class="item" label="Fan Angle">
-                    <input id="$alphaRadial" type="number" value="10" min="0" max="15" step="0.5">
+            <div class="item" label="Cell Dimensions">
+                <div class="row">
+                    <div class="item" label="Height">
+                        <input id="$height" type="number" value="40">
+                    </div>
+                    <div class="item" label="Width">
+                        <input id="$width" type="number" value="80">
+                    </div>
+                    <div class="item" label="Shear">
+                        <input id="$shear" type="number" value="0.25" min="0" max="0.5" step="0.01">
+                    </div>
+                    <div class="item" label="Fan Angle">
+                        <input id="$alphaRadial" type="number" value="10" min="0" max="15" step="0.5">
+                    </div>
                 </div>
             </div>
-            <div class="item" label="Columns">
+            <h3>Cell Array</h3>
+            <div class="item" label="Number of Columns">
                 <input id="$columns" type="range" value="3" min="1" max="8">
             </div>
-            <div class="item" label="Rows">
+            <div class="item" label="Number of Rows">
                 <input id="$rows" type="range" value="4" min="1" max="8">
             </div>
-            <div class="grow"></div>
-            <div class="item" label="View">
+            <h3>Viewport</h3>
+            <div class="item" label="Toggle View">
                 <label>
-                    <input type="checkbox" id="$toggleView"> Toggle view
+                    <input type="checkbox" id="$toggleViewCanvas" checked> Template Canvas
+                </label>
+                <label>
+                    <input type="checkbox" id="$toggleViewSmocking" checked> Smocking Pattern
                 </label>
             </div>
-            <div class="item" label="Animate">
-                    <input id="$animateWidth" type="range" value="0.25" min="0.1" max="0.5" step="0.01">
+            <div class="item" label="Animate Smocking Pattern">
+                    <input id="$animateWidth" type="range" value="max" min="0.1" max="0.5" step="0.01">
             </div>
+            <div class="grow"></div>
             <button onclick="downloadSVG()">Download SVG</button>
         </div>
         <div class="container">
@@ -85,9 +98,9 @@ function update() {
     while ($svg.firstChild) $svg.removeChild($svg.firstChild)
 
 
-    $svg.parentElement.hidden = !!$toggleView.checked
-    $canvas.parentElement.hidden = !$toggleView.checked
-    $animateWidth.parentElement.hidden = !$toggleView.checked
+    $svg.parentElement.hidden = !$toggleViewCanvas.checked
+    $canvas.parentElement.hidden = !$toggleViewSmocking.checked
+    $animateWidth.parentElement.hidden = !$toggleViewSmocking.checked
     const animateWidth = Number($animateWidth.value)
 
     // Read the inputs from the sidebar
@@ -107,13 +120,17 @@ function update() {
     const width = Number($width.value)
     const height = Number($height.value)
 
+    const elasticity = height / width
+    $animateWidth.max = elasticity >= 3 ? 0.95 : Math.min(elasticity * 0.95, 0.95) //Math.min(0.95 * Min, (1.45 - 0.45 * elasticity))
+    $animateWidth.min = elasticity >= 3 ? 0.85 : 0.15
+    //$animateWidth.value = Number($animateWidth.max)
 
     const columnsCount = Number($columns.value)
     const verticalsCount = 2 * columnsCount + 2
 
     $columns.max = !isRadial * Math.floor((800 - 20 * 2) / (2 * width)) + isRadial * Math.floor(360 / (2*alphaRadial))
     $rows.max = Math.floor((600 - 20 * 2) / height)
-    $animateWidth.max = height / width
+    
 
     const rowsCount = Number($rows.value)
     const horizontalsCount = rowsCount + 1
@@ -124,7 +141,7 @@ function update() {
     const ratioHW = height / width // ratio height to width for constant elasticity case
     const r0 = Math.ceil(width / (2 * Math.sin((alphaRadial / 2) * (Math.PI / 180)))) //Starting radius for first row
     var r = r0
-    var rOffset = (height / 2) / Math.cos((alphaRadial / 2) * (Math.PI / 180))
+    var rOffset = (height / 2) /// Math.cos((alphaRadial / 2) * (Math.PI / 180))
 
 
     // Draw the Grid
@@ -146,10 +163,11 @@ function update() {
                 drawLineRadial(r + rOffset * isOddColumn, x)
                 
                 //update values to increase diamond size as y increases
-                increasingWidth = 2 * (r + (height / width) * increasingWidth / Math.cos((alphaRadial / 2) * (Math.PI / 180))) * Math.sin((alphaRadial / 2) * (Math.PI / 180))
+                r = r + increasingHeight
+                increasingWidth = 2 * (r + increasingHeight / Math.cos((alphaRadial / 2) * (Math.PI / 180))) * Math.sin((alphaRadial / 2) * (Math.PI / 180))
                 increasingHeight = increasingWidth * ratioHW
                 rOffset = (increasingHeight / 2)
-                r = r + increasingHeight
+                
             }
             else {
                 drawLineLinear(x * width, y * height +  isOddColumn * height * oddOffset + isShear * (- height * shearOffset * isOddColumn  + columnIndex * height * 2 * shearOffset))
@@ -160,7 +178,7 @@ function update() {
         r = r0
         increasingWidth = width
         increasingHeight = height
-        rOffset = (height / 2) / Math.cos((alphaRadial /2) * (Math.PI / 180))
+        rOffset = (height / 2) /// Math.cos((alphaRadial /2) * (Math.PI / 180))
     }
 
     function drawLineLinear(x, y) {
@@ -177,12 +195,12 @@ function update() {
         isCircular = columnsCount * alphaRadial > 90
 
         alpha1 = 90 + x * alphaRadial - alphaRadial / 2  - columnsCount * alphaRadial
-        x1 = r * Math.cos(alpha1 * (Math.PI / 180)) + $svg.clientWidth / 2
-        y1 = r * Math.sin(alpha1 * (Math.PI / 180)) + isCircular * $svg.clientHeight / 2
+        x1 = r * Math.cos(alpha1 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + $svg.clientWidth / 2
+        y1 = r * Math.sin(alpha1 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180)) + isCircular * $svg.clientHeight / 2
 
         alpha2 = 90  + x * alphaRadial + alphaRadial / 2 - columnsCount * alphaRadial
-        x2 = r * Math.cos(alpha2 * (Math.PI / 180)) + $svg.clientWidth / 2
-        y2 = r * Math.sin(alpha2 * (Math.PI / 180)) + isCircular * $svg.clientHeight / 2
+        x2 = r * Math.cos(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + $svg.clientWidth / 2
+        y2 = r * Math.sin(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + isCircular * $svg.clientHeight / 2
 
         drawLine(x1, y1, x2, y2)
     }
@@ -263,12 +281,12 @@ function update() {
         y0 = 20 - r0
         
         //Top
-        alpha1 = 90 + x * animateAlpha  - columnsCount * animateAlpha / 2
+        alpha1 = 90 + x * animateAlpha  - (columnsCount-1) * animateAlpha / 2
         x1 = r * Math.cos(alpha1 * (Math.PI / 180)) //+ $canvas.width / 20
         y1 = r * Math.sin(alpha1 * (Math.PI / 180)) //+ isCircular * $canvas.height / 2
         
         //Middle left
-        alpha2 = 90  + x * animateAlpha -  animateAlpha / 2 - columnsCount * animateAlpha / 2
+        alpha2 = 90  + x * animateAlpha -  animateAlpha / 2 - (columnsCount-1) * animateAlpha / 2
         x2 = Math.sqrt((r + diamondHeight / 2) ** 2 + (increasingDiamondWidth / 2) ** 2) * Math.cos(alpha2 * (Math.PI / 180)) //+ $canvas.width / 2
         y2 = Math.sqrt((r + diamondHeight / 2) ** 2 + (increasingDiamondWidth / 2) ** 2) *  Math.sin(alpha2 * (Math.PI / 180)) //+ isCircular * $canvas.height / 2
         
@@ -277,7 +295,7 @@ function update() {
         y3 = (r + diamondHeight) * Math.sin(alpha1 * (Math.PI / 180)) //+ isCircular * $canvas.height / 2
         
         //Middle right
-        alpha4 = 90  + x * animateAlpha + animateAlpha / 2 - columnsCount * animateAlpha / 2
+        alpha4 = 90  + x * animateAlpha + animateAlpha / 2 - (columnsCount-1) * animateAlpha / 2
         x4 = Math.sqrt((r + diamondHeight / 2) ** 2 + (increasingDiamondWidth / 2) ** 2) * Math.cos(alpha4 * (Math.PI / 180)) //+ $canvas.width / 2
         y4 = Math.sqrt((r + diamondHeight / 2) ** 2 + (increasingDiamondWidth / 2) ** 2) * Math.sin(alpha4 * (Math.PI / 180)) //+ isCircular * $canvas.height / 2
         
