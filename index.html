@@ -147,8 +147,8 @@ function update() {
     const columnsCount = Number($columns.value)
     const verticalsCount = 2 * columnsCount + 2
 
-    $columns.max = !isRadial * Math.floor((800 - 20 * 2) / (2 * width)) + isRadial * Math.floor(360 / (2*alphaRadial))
-    $rows.max = Math.floor((600 - 20 * 2) / height)
+    $columns.max = !isRadial * Math.floor((800 - 20 * 2) / (2 * width)) + isRadial * Math.floor(360 / (12*alphaRadial))
+    $rows.max = !isRadial * Math.floor((600 - 20 * 2) / height) + isRadial * Math.floor((600 - 20 * 2) / (2 * height))
     
 
     const rowsCount = Number($rows.value)
@@ -191,14 +191,14 @@ function update() {
                 
             }
             else if (isHexagon) {
-                drawLineLinear(x * width, y * height * 4 / 3  + !isOddColumn * height / 6 +  isOddColumn * height / 2)
-                drawLineLinear(x * width, y * height * 4 / 3  + !isOddColumn * height * 7 / 6 + isOddColumn * 5 * height / 6 )
+                drawLineLinear(x * width + 400 - (verticalsCount-2) * width / 2, y * height * 4 / 3  + !isOddColumn * height / 6 +  isOddColumn * height / 2  + 300 - horizontalsCount *  4*height/6)
+                drawLineLinear(x * width + 400 - (verticalsCount-2) * width / 2, y * height * 4 / 3  + !isOddColumn * height * 7 / 6 + isOddColumn * 5 * height / 6 + 300 - horizontalsCount * 4*height/6)
             } 
             else {
                 if (y == horizontalsCount - 1 && isOddColumn) {
                     continue
                 }
-                drawLineLinear(x * width, y * height +  isOddColumn * height * oddOffset + isShear * (- height * shearOffset * isOddColumn  + columnIndex * height * 2 * shearOffset))
+                drawLineLinear(x * width + 400 - (verticalsCount-2) * width / 2, y * height +  isOddColumn * height * oddOffset + isShear * (- height * shearOffset * isOddColumn  + columnIndex * height * 2 * shearOffset) + 300 - horizontalsCount * height/2 - isShear * shearOffset * height /2 )
             }
         }
 
@@ -210,11 +210,11 @@ function update() {
     }
 
     function drawLineLinear(x, y) {
-        const x0 = 20 + width / 2
-        const y0 = 20
+        //const x0 = 20 + width / 2
+        //const y0 = 20
 
-        x = x0 + x
-        y = y0 + y 
+        //x = x0 + x
+        //y = y0 + y 
         drawLine(x + width / 2, y, x - width / 2, y)
     }
 
@@ -224,11 +224,11 @@ function update() {
 
         alpha1 = 90 + x * alphaRadial - alphaRadial / 2  - columnsCount * alphaRadial
         x1 = r * Math.cos(alpha1 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + $svg.clientWidth / 2
-        y1 = r * Math.sin(alpha1 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180)) + isCircular * $svg.clientHeight / 2
+        y1 = r * Math.sin(alpha1 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180)) + isCircular * $svg.clientHeight / 2 - horizontalsCount * height/2 - r0/3
 
         alpha2 = 90  + x * alphaRadial + alphaRadial / 2 - columnsCount * alphaRadial
         x2 = r * Math.cos(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + $svg.clientWidth / 2
-        y2 = r * Math.sin(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + isCircular * $svg.clientHeight / 2
+        y2 = r * Math.sin(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + isCircular * $svg.clientHeight / 2 - horizontalsCount * height/2 - r0/3
 
         drawLine(x1, y1, x2, y2)
     }
@@ -253,7 +253,7 @@ function update() {
             for (let y = 0; y < rowsCount; y++) {
                 if (isRadial){
                     
-                    drawRadialDiamond(r, x, animateAlpha)
+                    drawRadialDiamond(r + 300 - (rowsCount+2) * height /2 , x, animateAlpha)
 
                     r = r + 2 * Math.sqrt((increasingHeight / 2) ** 2 - (increasingDiamondWidth / 2) ** 2)
                     //keep track of increasing width (from template, not diamond width) to calculate increasing height of template
