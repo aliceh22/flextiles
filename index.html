@@ -70,9 +70,9 @@
                         <label>
                             <input type="radio" id="$fullArray" name="arraySelectionType" checked> Full Array
                         </label>
-                        <label>
+                        <!-- <label>
                             <input type="radio" id="$cellSelection" name="arraySelectionType" > Select Cells
-                        </label>
+                        </label> -->
                     </div>
                 </div>
                 <div class="item" label="Number of Columns">
@@ -126,8 +126,8 @@ function update() {
     $animateWidth.parentElement.hidden = !$toggleViewSmocking.checked
     const animateWidth = Number($animateWidth.value)
 
-    $columns.disabled = $cellSelection.checked
-    $rows.disabled = $cellSelection.checked
+    // $columns.disabled = $cellSelection.checked
+    // $rows.disabled = $cellSelection.checked
 
     // Read the inputs from the sidebar
     
