@@ -13,6 +13,7 @@
     <meta property="og:description" content="Design tool for generating Flextiles templates">
     <meta property="og:url" content="https://flextiles.github.io">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -21,74 +22,85 @@
     </header>
     <main>
         <div class="sidebar">
-            <h3>Cell Properties</h3>
-            <div class="item" label="Pattern Type">
-                <div class="row radio">
-                    <label>
-                        <input id="$regular" type="radio" name="patternType" checked> Diamond
-                    </label>
-                    <label>
-                        <input id="$isShear" type="radio" name="patternType"> Shear
-                    </label>
-                    <label>
-                        <input id="$isHexagon" type="radio" name="patternType"> Hexagon
-                    </label>
-                    
-                </div>
-                <div class="row radio">
-                    <label>
-                        <input id="$isRadial" type="radio" name="patternType"> Radial
-                    </label>
-                </div>
-            </div>
-            <div class="item" label="Cell Dimensions">
-                <div class="row">
-                    <div class="item" label="Height">
-                        <input id="$height" type="number" value="40">
+            <button class="dropdown-btn"> <h3>Cell Properties  <i class="fa fa-caret-down"></i></h3>
+                
+            </button>
+                <div class="dropdown-container">
+                <div class = "item" label="Pattern Type">
+                    <div class="row radio">
+                        <label>
+                            <input id="$regular" type="radio" name="patternType" checked> Diamond
+                        </label>
+                        <label>
+                            <input id="$isShear" type="radio" name="patternType"> Shear
+                        </label>
+                        
                     </div>
-                    <div class="item" label="Width">
-                        <input id="$width" type="number" value="80">
-                    </div>
-                    <div class="item" label="Shear">
-                        <input id="$shear" type="number" value="0.25" min="0" max="0.5" step="0.01">
-                    </div>
-                    <div class="item" label="Fan Angle">
-                        <input id="$alphaRadial" type="number" value="10" min="0" max="15" step="0.5">
+                    <div class="row radio">
+                        <label>
+                            <input id="$isHexagon" type="radio" name="patternType"> Hexagon
+                        </label>
+                        <label>
+                            <input id="$isRadial" type="radio" name="patternType"> Radial
+                        </label>
                     </div>
                 </div>
-            </div>
-            <h3>Cell Array</h3>
-            <div class="item" label="Array Design">
-                <div class="row radio">
-                    <label>
-                        <input type="radio" id="$fullArray" name="arraySelectionType" checked> Full Array
-                    </label>
-                    <label>
-                        <input type="radio" id="$cellSelection" name="arraySelectionType" > Select Cells
-                    </label>
+                <div class="item" label="Cell Dimensions">
+                    <div class="row">
+                        <div class="item" label="Height">
+                            <input id="$height" type="number" value="40">
+                        </div>
+                        <div class="item" label="Width">
+                            <input id="$width" type="number" value="80">
+                        </div>
+                        <div class="item" label="Shear">
+                            <input id="$shear" type="number" value="0.25" min="0" max="0.5" step="0.01">
+                        </div>
+                        <div class="item" label="Fan Angle">
+                            <input id="$alphaRadial" type="number" value="10" min="0" max="15" step="0.5">
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="item" label="Number of Columns">
-                <input id="$columns" type="range" value="3" min="1" max="8">
+            <button class="dropdown-btn"> <h3>Cell Array <i class="fa fa-caret-down"></i></h3>
+            </button>
+            <div class="dropdown-container">
+                <div class="item" label="Array Design">
+                    <div class="row radio">
+                        <label>
+                            <input type="radio" id="$fullArray" name="arraySelectionType" checked> Full Array
+                        </label>
+                        <label>
+                            <input type="radio" id="$cellSelection" name="arraySelectionType" > Select Cells
+                        </label>
+                    </div>
+                </div>
+                <div class="item" label="Number of Columns">
+                    <input id="$columns" type="range" value="3" min="1" max="8">
+                </div>
+                <div class="item" label="Number of Rows">
+                    <input id="$rows" type="range" value="4" min="1" max="8">
+                </div>
             </div>
-            <div class="item" label="Number of Rows">
-                <input id="$rows" type="range" value="4" min="1" max="8">
-            </div>
+            <button class="dropdown-btn"> <h3>Viewport <i class="fa fa-caret-down"></i></h3>
+            </button>
+            <div class="dropdown-container">
             
-            <h3>Viewport</h3>
-            <div class="item" label="Toggle View">
-                <label>
-                    <input type="checkbox" id="$toggleViewCanvas" checked> Template Canvas
-                </label>
-                <label>
-                    <input type="checkbox" id="$toggleViewSmocking"> Smocking Pattern
-                </label>
+                <div class="item" label="Toggle View">
+                    <label>
+                        <input type="checkbox" id="$toggleViewCanvas" checked> Template Canvas
+                    </label>
+                    <label>
+                        <input type="checkbox" id="$toggleViewSmocking"> Smocking Pattern
+                    </label>
+                </div>
+                <div class="item" label="Animate Smocking Pattern">
+                        <input id="$animateWidth" type="range" value="max" min="0.1" max="0.5" step="0.01">
+                </div>
             </div>
-            <div class="item" label="Animate Smocking Pattern">
-                    <input id="$animateWidth" type="range" value="max" min="0.1" max="0.5" step="0.01">
-            </div>
+
             <div class="grow"></div>
-            <button onclick="downloadSVG()">Download SVG</button>
+            <button class="download" onclick="downloadSVG()">Download SVG</button>
         </div>
         <div class="container">
             <svg xmlns="http://www.w3.org/2000/svg" id="$svg" width="800px" height="600px" viewport="0 0 800 600"></svg>
@@ -162,6 +174,21 @@ function update() {
     var r = r0
     var rOffset = (height / 2) /// Math.cos((alphaRadial / 2) * (Math.PI / 180))
 
+    //Make menu dropdowns possible
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var d;
+    for (d = 0; d < dropdown.length; d++) {
+      dropdown[d].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+          dropdownContent.style.display = "none";
+        } else {
+          dropdownContent.style.display = "block";
+        }
+      });
+    }
+
 
     // Draw the Grid
     for (let x = 0; x < verticalsCount; x++) {
@@ -191,8 +218,10 @@ function update() {
                 
             }
             else if (isHexagon) {
+                if (y<horizontalsCount-1){
                 drawLineLinear(x * width + 400 - (verticalsCount-2) * width / 2, y * height * 4 / 3  + !isOddColumn * height / 6 +  isOddColumn * height / 2  + 300 - horizontalsCount *  4*height/6)
                 drawLineLinear(x * width + 400 - (verticalsCount-2) * width / 2, y * height * 4 / 3  + !isOddColumn * height * 7 / 6 + isOddColumn * 5 * height / 6 + 300 - horizontalsCount * 4*height/6)
+                }
             } 
             else {
                 if (y == horizontalsCount - 1 && isOddColumn) {
@@ -370,6 +399,7 @@ function update() {
         ctx.closePath()
         ctx.stroke()
     }
+
 }
 
 function drawLine(x1, y1, x2, y2) {
@@ -440,6 +470,7 @@ input {
     font-family: system-ui;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    accent-color: #FF1493;
 }
 
 body {
@@ -495,6 +526,37 @@ main {
     min-width: 264px;
     width: 264px;
     padding: 16px;
+}
+
+.sidebar, .dropdown-btn {
+   display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    word-break: break-word;
+    border: none;
+    background: none;
+
+}
+
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+
+.dropdown-container {
+  display: none;
+  padding-left: 8px;
+     display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.sidebar a:hover, .dropdown-btn:hover {
+  color:  #FF1493;
 }
 
 .container svg,
@@ -623,6 +685,10 @@ input[type="range"]::-ms-thumb {
 
 /* Button */
 button {
+
+}
+
+.download {
     position: relative;
     display: flex;
     align-items: center;
@@ -645,7 +711,7 @@ button {
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
-    background: var(--primary-color);
+    background:    #FF1493;/*var(--primary-color);*/
     color: white;
     transition: transform 200ms;
     border-radius: 8px;
@@ -653,6 +719,11 @@ button {
     letter-spacing: 0.12em;
     text-rendering: optimizeLegibility;
     color: rgba(255, 255, 255, 0.85);
+}
+
+.download:hover {
+
+     background:#C71585; 
 }
 
 .row.radio {
