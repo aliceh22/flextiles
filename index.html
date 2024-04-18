@@ -22,10 +22,8 @@
     </header>
     <main>
         <div class="sidebar">
-            <button class="dropdown-btn"> <h3>Cell Properties  <i class="fa fa-caret-down"></i></h3>
-                
-            </button>
-                <div class="dropdown-container">
+         <h3>Cell Properties </h3>
+
                 <div class = "item" label="Pattern Type">
                     <div class="row radio">
                         <label>
@@ -44,6 +42,7 @@
                             <input id="$isRadial" type="radio" name="patternType"> Radial
                         </label>
                     </div>
+                    
                 </div>
                 <div class="item" label="Cell Dimensions">
                     <div class="row">
@@ -60,44 +59,46 @@
                             <input id="$alphaRadial" type="number" value="10" min="0" max="15" step="0.5">
                         </div>
                     </div>
+                    <div class="row">
+                        <p id="$infoRadial" style="font-size:13px; color:rgb(88 88 88); font-weight: 500;"> Note: If radial pattern exceeds canvas size, open/print downloaded svg in larger than A4 for full pattern.
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <button class="dropdown-btn"> <h3>Cell Array <i class="fa fa-caret-down"></i></h3>
-            </button>
-            <div class="dropdown-container">
+
+            <h3>Cell Array</h3>
                 <div class="item" label="Array Design">
                     <div class="row radio">
                         <label>
                             <input type="radio" id="$fullArray" name="arraySelectionType" checked> Full Array
                         </label>
-                        <!-- <label>
+                        <label>
                             <input type="radio" id="$cellSelection" name="arraySelectionType" > Select Cells
-                        </label> -->
+                        </label>
                     </div>
                 </div>
-                <div class="item" label="Number of Columns">
+                <div class="item" id="$columnLabel" style="font-size:13px; color:rgb(88 88 88); font-weight: 500;">
+                    <label>Number of columns: <span id="$colNumText"></span></label>
                     <input id="$columns" type="range" value="3" min="1" max="8">
                 </div>
-                <div class="item" label="Number of Rows">
+                <div class="item" id="$rowLabel" style="font-size:13px; color:rgb(88 88 88); font-weight: 500;">
+                    <label>Number of rows: <span id="$rowNumText"></span></label>
                     <input id="$rows" type="range" value="4" min="1" max="8">
                 </div>
-            </div>
-            <button class="dropdown-btn"> <h3>Viewport <i class="fa fa-caret-down"></i></h3>
-            </button>
-            <div class="dropdown-container">
+              
+           <h3>Viewport</h3>
             
                 <div class="item" label="Toggle View">
                     <label>
                         <input type="checkbox" id="$toggleViewCanvas" checked> Template Canvas
                     </label>
                     <label>
-                        <input type="checkbox" id="$toggleViewSmocking"> Smocking Pattern
+                        <input type="checkbox" id="$toggleViewSmocking" checked> Smocking Pattern
                     </label>
                 </div>
                 <div class="item" label="Animate Smocking Pattern">
                         <input id="$animateWidth" type="range" value="max" min="0.1" max="0.5" step="0.01">
                 </div>
-            </div>
+
 
             <div class="grow"></div>
             <button class="download" onclick="downloadSVG()">Download SVG</button>
@@ -120,26 +121,29 @@ function update() {
     // Clear the SVG
     while ($svg.firstChild) $svg.removeChild($svg.firstChild)
 
-
+    // Hide and show elements according to selections
     $svg.parentElement.hidden = !$toggleViewCanvas.checked
     $canvas.parentElement.hidden = !$toggleViewSmocking.checked
-    $animateWidth.parentElement.hidden = !$toggleViewSmocking.checked
+    $animateWidth.parentElement.hidden = !$toggleViewSmocking.checked || !$fullArray.checked
+    $toggleViewSmocking.disabled = !$fullArray.checked
+    if(!$fullArray.checked){
+        $toggleViewSmocking.checked = true
+        $toggleViewSmocking.disabled = true
+        $canvas.parentElement.hidden = true
+    }
+    $infoRadial.parentElement.hidden = !$isRadial.checked
     const animateWidth = Number($animateWidth.value)
 
-    // $columns.disabled = $cellSelection.checked
-    // $rows.disabled = $cellSelection.checked
 
     // Read the inputs from the sidebar
-    
-
     const isShear = Number($isShear.checked)
     const isRadial = Number($isRadial.checked)
     const isHexagon =  Number($isHexagon.checked)
+    const isFullArray = Number($fullArray.checked)
 
     $alphaRadial.parentElement.hidden = !isRadial
     const alphaRadial = Number($alphaRadial.value)
 
-    
     $shear.parentElement.hidden = !isShear
     const shearOffset = isShear ? Number($shear.value) : 0
     const oddOffset = 0.5
@@ -147,6 +151,7 @@ function update() {
     const width = Number($width.value)
     const height = Number($height.value)
 
+    // Set animation properties for previewing smocking outcome
     const elasticity = height / width
     $animateWidth.max = elasticity >= 3 ? 0.95 : Math.min(elasticity * 0.95, 0.95) //Math.min(0.95 * Min, (1.45 - 0.45 * elasticity))
     $animateWidth.min = elasticity >= 3 ? 0.85 : 0.15
@@ -156,16 +161,30 @@ function update() {
         $animateWidth.max = Math.min(2 * height / 3, width) / width
     }
 
-    const columnsCount = Number($columns.value)
-    const verticalsCount = 2 * columnsCount + 2
-
+    //Specifying min and max columns and rows to fit canvas
     $columns.max = !isRadial * Math.floor((800 - 20 * 2) / (2 * width)) + isRadial * Math.floor(360 / (12*alphaRadial))
     $rows.max = !isRadial * Math.floor((600 - 20 * 2) / height) + isRadial * Math.floor((600 - 20 * 2) / (2 * height))
     
-
-    const rowsCount = Number($rows.value)
+    const columnsCount = isFullArray * Number($columns.value) + !isFullArray * $columns.max
+    const verticalsCount = 2 * columnsCount + 2
+    
+    const rowsCount = isFullArray * Number($rows.value) + !isFullArray * $rows.max
     const horizontalsCount = rowsCount + 1
 
+    document.getElementById("$colNumText").innerHTML = columnsCount
+    document.getElementById("$rowNumText").innerHTML = rowsCount
+   
+    if(!$fullArray.checked){
+        $columns.value = $columns.max
+        $rows.value = $rows.max
+        document.getElementById("$columnLabel").style.color= "rgb(180 180 180)"
+        document.getElementById("$rowLabel").style.color= "rgb(180 180 180)"
+    } else {
+        document.getElementById("$columnLabel").style.color= "rgb(88 88 88)"
+        document.getElementById("$rowLabel").style.color= "rgb(88 88 88)"
+    }
+    
+    
     // For radial 
     var increasingHeight = height // keep track of increase in height
     var increasingWidth = width // keep track of increase in width
@@ -173,21 +192,6 @@ function update() {
     const r0 = Math.ceil(width / (2 * Math.sin((alphaRadial / 2) * (Math.PI / 180)))) //Starting radius for first row
     var r = r0
     var rOffset = (height / 2) /// Math.cos((alphaRadial / 2) * (Math.PI / 180))
-
-    //Make menu dropdowns possible
-    var dropdown = document.getElementsByClassName("dropdown-btn");
-    var d;
-    for (d = 0; d < dropdown.length; d++) {
-      dropdown[d].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var dropdownContent = this.nextElementSibling;
-        if (dropdownContent.style.display === "block") {
-          dropdownContent.style.display = "none";
-        } else {
-          dropdownContent.style.display = "block";
-        }
-      });
-    }
 
 
     // Draw the Grid
@@ -258,7 +262,7 @@ function update() {
         alpha2 = 90  + x * alphaRadial + alphaRadial / 2 - columnsCount * alphaRadial
         x2 = r * Math.cos(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + $svg.clientWidth / 2
         y2 = r * Math.sin(alpha2 * (Math.PI / 180)) / Math.cos((alphaRadial / 2) * (Math.PI / 180))  + isCircular * $svg.clientHeight / 2 - horizontalsCount * height/2 - r0/3
-
+        
         drawLine(x1, y1, x2, y2)
     }
 
@@ -294,11 +298,8 @@ function update() {
                     
                 }
                 else if (isHexagon){
-
                     drawHexagon(x, y)
-
-                } else 
-                {
+                } else {
                     drawDiamond(x, y)
                 }
             }
@@ -408,22 +409,49 @@ function drawLine(x1, y1, x2, y2) {
     line.setAttribute('y1', y1)
     line.setAttribute('x2', x2)
     line.setAttribute('y2', y2)
-    line.setAttribute('stroke', 'black')
-    line.setAttribute('stroke-width', '3')
-    $svg.appendChild(line)
 
     const circle1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circle1.setAttribute('cx', x1)
     circle1.setAttribute('cy', y1)
-    circle1.setAttribute('r', '3')
-    circle1.setAttribute('fill', 'black')
-    $svg.appendChild(circle1)
 
     const circle2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circle2.setAttribute('cx', x2)
     circle2.setAttribute('cy', y2)
-    circle2.setAttribute('r', '3')
-    circle2.setAttribute('fill', 'black')
+
+    // Change style for full or partial array
+    if($fullArray.checked){ 
+        line.setAttribute('stroke-width', '3')
+        line.setAttribute('stroke', 'black')
+        circle1.setAttribute('r', '3')    
+        circle1.setAttribute('fill', 'black')
+        circle2.setAttribute('r', '3')    
+        circle2.setAttribute('fill', 'black')
+    } else {
+        line.setAttribute('stroke-width', '5')
+        line.setAttribute('stroke', 'pink') 
+        circle1.setAttribute('fill', 'pink')
+        circle2.setAttribute('fill', 'pink')
+        circle1.setAttribute('r', '4') 
+        circle2.setAttribute('r', '4') 
+        line.onmouseover = e => {
+            line.style.stroke = line.style.stroke == 'black' ? 'black' : '#FF1493'
+            circle1.style.fill = circle1.style.fill == 'black' ? 'black' : '#FF1493'
+            circle2.style.fill = circle2.style.fill == 'black' ? 'black' : '#FF1493'
+        }
+        line.onmouseout = e => {
+            line.style.stroke = line.style.stroke == 'black' ? 'black' : 'pink'
+            circle1.style.fill = circle1.style.fill == 'black' ? 'black' : 'pink' 
+            circle2.style.fill = circle2.style.fill == 'black' ? 'black' : 'pink'
+        }
+        line.onclick = e => {
+            line.style.stroke = line.style.stroke == 'black' ? 'pink' : 'black' 
+            circle1.style.fill = circle1.style.fill == 'black' ? 'pink' : 'black'
+            circle2.style.fill = circle2.style.fill == 'black' ? 'pink' : 'black' 
+        }
+    }
+    
+    $svg.appendChild(line)
+    $svg.appendChild(circle1)
     $svg.appendChild(circle2)
 }
 
@@ -445,8 +473,12 @@ function downloadSVG() {
     document.body.removeChild(downloadLink)
 }
 
+    
+    
 // Bind event handlers
 document.querySelectorAll('.sidebar input').forEach(e => e.oninput = update)
+    
+    
 update()
 </script>
 <!-- 
@@ -521,42 +553,13 @@ main {
 .sidebar {
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
     box-shadow: var(--shadow-1);
     background: rgba(0, 0, 0, 0.1);
     min-width: 264px;
     width: 264px;
     padding: 16px;
-}
-
-.sidebar, .dropdown-btn {
-   display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    word-break: break-word;
-    border: none;
-    background: none;
-
-}
-
-.fa-caret-down {
-  float: right;
-  padding-right: 8px;
-  padding-left: 8px;
-}
-
-
-.dropdown-container {
-  display: none;
-  padding-left: 8px;
-     display: flex;
-    flex-direction: column;
-    margin-bottom: 24px;
-    max-width: 100%;
-    word-break: break-word;
-}
-
-.sidebar a:hover, .dropdown-btn:hover {
-  color:  #FF1493;
+    height: calc(100vh - 88px);
 }
 
 .container svg,
